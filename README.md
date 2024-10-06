@@ -33,7 +33,7 @@ To use String Formatter in your Java project, simply include it as a dependency 
 <dependency>
     <groupId>dev.utano</groupId>
     <artifactId>Formatter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
