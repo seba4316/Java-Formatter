@@ -6,7 +6,7 @@
 
     <groupId>dev.utano</groupId>
     <artifactId>Formatter</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <name>Formatter</name>
     <description>Versatile and fast Java library for dynamic text formatting</description>
