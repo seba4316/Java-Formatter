@@ -79,37 +79,39 @@ public class Formatter {
 
 		boolean quick = false;
 
-		String usedStartCharacter;
-		int endCharacterLocation;
 		while (text.contains(startCharacter) || (quick = text.contains(quickCharacter))) {
-			if ((!quick && !text.contains(endCharacter)) || currentIndex >= placeHolders.length) {
-				formatted.append(text);
-				break;
-			}
-
-			usedStartCharacter = quick ? quickCharacter : startCharacter;
-
+			String usedStartCharacter = quick ? quickCharacter : startCharacter;
 			int usedCharacterIndex = text.indexOf(usedStartCharacter);
-			String pieceBefore = text.substring(0, text.indexOf(usedStartCharacter));
-			formatted.append(pieceBefore);
+			formatted.append(text, 0, usedCharacterIndex); // Append part before placeholder
 
 			if (quick) {
-				text = text.substring(usedCharacterIndex + 1); // Removing quick character ('%')
-				formatted.append(placeHolders[currentIndex].getValue());
+				// Process quick character (single %)
+				text = text.substring(usedCharacterIndex + 1); // Skip the quick character
+				String quickValue = placeHolders[currentIndex++].getValue().toString();
+				formatted.append(quickValue);
+				quick = false; // Reset quick flag
 			} else {
-				endCharacterLocation = text.indexOf(endCharacter);
-				String placeHolderName = text.substring(usedCharacterIndex + 1, endCharacterLocation);
-				text = text.substring(endCharacterLocation + 1); // Skipping after the end character ('}')
+				// Process normal placeholders with {name}
+				int endCharacterLocation = text.indexOf(endCharacter, usedCharacterIndex);
+				if (endCharacterLocation == -1) {
+					// If end character not found, append the rest of the text
+					formatted.append(text);
+					break;
+				}
 
+				String placeHolderName = text.substring(usedCharacterIndex + startCharacter.length(), endCharacterLocation);
 				String placeHolderValue = getPlaceHolder(placeHolders, placeHolderName);
-				if (placeHolderValue != null)
-					formatted.append(placeHolderValue);
-				else
-					formatted.append(usedStartCharacter).append(placeHolderName).append(endCharacter);
+
+				// Append placeholder value or the original placeholder if not found
+				formatted.append(placeHolderValue != null ? placeHolderValue : usedStartCharacter + placeHolderName + endCharacter);
+
+				text = text.substring(endCharacterLocation + endCharacter.length()); // Move to next part of the text
 			}
-			currentIndex++;
 		}
-		formatted.append(text); // Adding the last bit
+
+		// Append any remaining part of the text
+		formatted.append(text);
+
 		return formatted.toString();
 	}
 
