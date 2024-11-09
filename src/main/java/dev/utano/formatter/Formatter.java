@@ -87,8 +87,8 @@ public class Formatter {
 			if (quick) {
 				// Process quick character (single %)
 				text = text.substring(usedCharacterIndex + 1); // Skip the quick character
-				String quickValue = placeHolders[currentIndex++].getValue().toString();
-				formatted.append(quickValue);
+				Object quickValue = placeHolders[currentIndex++].getValue();
+				formatted.append(quickValue == null ? "null" : quickValue.toString());
 				quick = false; // Reset quick flag
 			} else {
 				// Process normal placeholders with {name}
@@ -127,9 +127,11 @@ public class Formatter {
 			return null;
 		for (PlaceHolder placeHolder : placeHolders)
 			if (placeHolder != null && key.equals(placeHolder.getName()) && placeHolder.getValue() != null) {
+				String value = placeHolder.getValue() == null ? "null" : placeHolder.getValue().toString();
+
 				if (!formatterSettings.isApplyFormatterToPlaceHolders())
-					return placeHolder.getValue().toString();
-				return format(placeHolder.getValue().toString(), placeHolders);
+					return value;
+				return format(value, placeHolders);
 			}
 
 		return null;
